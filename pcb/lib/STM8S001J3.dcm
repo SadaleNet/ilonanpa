@@ -1,0 +1,9 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP STM8S001J3
+D Automotive 8-bit MCU, 8 Kbyte Flash, TSSOP20
+K STM8 Microcontroller Automotive Line
+F http://www.st.com/resource/en/datasheet/stm8af6223.pdf
+$ENDCMP
+#
+#End Doc Library
