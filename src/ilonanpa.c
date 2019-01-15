@@ -196,11 +196,15 @@ void TIM4_update(void) __interrupt(TIM4_OVR_UIF_IRQ) {
 
 //Read ADC value
 uint16_t analog_read(uint8_t channel) {
+	ADC_TDRL |= (1 << channel); //Disable Schmitt triggers of channels to be used as recommended by the reference manual.
+	ADC_CR1 |= ADC_CR1_ADON; //Enable ADC. The first "ADC_CR1 |= ADC_CR1_ADON" wakes it up from power down mode.
 	ADC_CSR = channel; // Select channel 2 (AIN2=PC4)
     ADC_CR1 &= ~ADC_CR1_CONT; // Single conversion mode
-    ADC_CR1 |= ADC_CR1_ADON; // Start conversion
+    ADC_CR1 |= ADC_CR1_ADON; // The second "ADC_CR1 |= ADC_CR1_ADON" starts conversion.
     do { nop(); } while ((ADC_CSR >> 7) == 0);
     ADC_CSR &= ~ADC_CSR_EOC; // Clear "End of conversion"-flag
+    ADC_CR1 &= ~ADC_CR1_ADON; //Power down the ADC
+	ADC_TDRL &= ~(1 << channel); //Enable schmitt triggers so that digital IO would work
     return (ADC_DRH << 2) | (ADC_DRL >> 6);  // Left aligned
 }
 
@@ -297,8 +301,6 @@ void disable_swim_and_disable_schmitt_trigger(void){
 	// Disables SWIM
 	CFG_GCR |= CFG_GCR_SWD; //Disables SWIM
 	PD_CR1 &= ~PIN1; //Set the SWIM pin to floating mode
-
-	ADC_TDRL |= PIN5; //Disable schmitt triggers for the pin
 }
 
 //This is the first mode entered on power up.
@@ -917,15 +919,12 @@ void adc_init(void){
     ADC_CR2 = 0;
     ADC_CR3 = 0;
 
-	ADC_TDRL = PIN2|PIN6; //Disable Schmitt triggers of channels to be used as recommended by the reference manual.
     ADC_CR1 |= 7<<4; //Sets SPSEL. Divides the ADC clock by 18.
-    ADC_CR1 |= ADC_CR1_ADON; // Turn on the ADC
 }
 
 int main(void)
 {
 	//safetyDelay(); //Prevents SWIM pin lock-up
-	
 
 	//Setting the HSI clock to 16Mhz. 2Mhz simply isn't sufficient for our main loop!
     CLK_CKDIVR = 0;
