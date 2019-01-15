@@ -417,6 +417,7 @@ void factoryMode(void){
 	uint16_t enWekaMeasurementCounter = 0;
 	uint16_t enWekaMeasurementWaitCounter = 0;
 	bool preventEnWekaMeasurement = false; //Implementation limitation: Doesn't work for non-target button groups for calibration scene.
+	//TODO: The initial en/weka mode isn't detected. Anyway, since it's factory mode, it won't be used in normal operation, so we can get away with it for now. :P
 	bool measuringEnWeka = false;
 	bool previousWekaPosition = false;
 	bool currentWekaPosition = false;
@@ -698,10 +699,13 @@ void normalMode(void){
 	//en/weka measurement handling
 	uint16_t enWekaMeasurementCounter = 0; //determine when to detect "en/weka"
 	uint16_t enWekaMeasurementWaitCounter = 0;
-	bool preventEnWekaMeasurement = true; //If any button is held, temporarily prevent en/weka measurement
+	bool preventEnWekaMeasurement = false; //If any button is held, temporarily prevent en/weka measurement
 	bool measuringEnWeka = false; //If true, the entire actionCounter~maxActionCounter period would not do anything so that en/weka can be accurately measured. If we lit the LEDs in the same period as measurement of en/weka, it will cause problem when the supply voltage is high enough (e.g. 4.5V)
-	bool previousWekaPosition = false;
-	bool currentWekaPosition = false;
+	//Wait for a short while before performing the first en/weka measurement.
+	for(int i=0; i<EN_WEKA_WAIT_FRAME; i++)
+		wfi();
+	bool previousWekaPosition = !!(PORT(EN_WEKA_PORT, IDR)&EN_WEKA_PIN);
+	bool currentWekaPosition = previousWekaPosition;
 	struct DebouncedValueU8_3 debouncedValueEnWeka;
 
 	//Variables for storing the state of the pressed AWT, LMA and PKT buttons.
