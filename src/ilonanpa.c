@@ -42,20 +42,20 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #define MIN_VALUE -1600
 
 //Definition of LED ports and pins
-#define LED_A_PORT    PA
-#define LED_A_PIN     PIN1
+#define LED_A_PORT    PD
+#define LED_A_PIN     PIN6
 #define LED_B_PORT    PA
 #define LED_B_PIN     PIN3
 #define LED_C_PORT    PB
 #define LED_C_PIN     PIN4
 #define LED_D_PORT    PC
-#define LED_D_PIN     PIN3
-#define LED_E_PORT    PC
-#define LED_E_PIN     PIN6
+#define LED_D_PIN     PIN4
+#define LED_E_PORT    PD
+#define LED_E_PIN     PIN5
 
 //Port definition of buttons
-#define EN_WEKA_PORT	PB
-#define EN_WEKA_PIN		PIN5
+#define EN_WEKA_PORT	PA
+#define EN_WEKA_PIN		PIN3
 #define AWT_PORT		PC
 #define AWT_PIN			PIN4
 #define LMA_PORT		PD
@@ -125,15 +125,18 @@ void litLed(int ledId) {
 	PORT(LED_##SRC##_PORT, ODR) |= LED_##SRC##_PIN; \
 	PORT(LED_##SINK##_PORT, ODR) &= ~LED_##SINK##_PIN
 
-	//LED_A_PIN LED_B_PIN
-    PA_DDR &= ~(LED_A_PIN|LED_B_PIN); //Setting the pins to INPUT mode
-    PA_CR1 &= ~(LED_A_PIN|LED_B_PIN); //Setting the pins to FLOATING mode. No pull up.
+	//LED_B_PIN
+    PA_DDR &= ~(LED_B_PIN); //Setting the pins to INPUT mode
+    PA_CR1 &= ~(LED_B_PIN); //Setting the pins to FLOATING mode. No pull up.
 	//LED_C_PIN
     PB_DDR &= ~(LED_C_PIN); //Setting the pins to INPUT mode
     PB_CR1 &= ~(LED_C_PIN); //Setting the pins to FLOATING mode. No pull up.
-    //LED_D_PIN LED_E_PIN
-    PC_DDR &= ~(LED_D_PIN|LED_E_PIN); //Setting the pins to INPUT mode
-    PC_CR1 &= ~(LED_D_PIN|LED_E_PIN); //Setting the pins to FLOATING mode. No pull up.
+    //LED_D_PIN
+    PC_DDR &= ~(LED_D_PIN); //Setting the pins to INPUT mode
+    PC_CR1 &= ~(LED_D_PIN); //Setting the pins to FLOATING mode. No pull up.
+	//LED_A_PIN LED_E_PIN
+    PD_DDR &= ~(LED_A_PIN|LED_E_PIN); //Setting the pins to INPUT mode
+    PD_CR1 &= ~(LED_A_PIN|LED_E_PIN); //Setting the pins to FLOATING mode. No pull up.
 
 	switch(ledId){
 		case 0:		CHARLIEPLEX_LED_OUTPUT(A, B);	break;
